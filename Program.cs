@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Xml;
 
 namespace MertLesson010
@@ -84,6 +85,7 @@ namespace MertLesson010
             {
                 Ip[i] = B(input[i]);
             }
+
             // 3. Madde
             int max = input[0];
             for (int i = 1; i < input.Length; i++)
@@ -95,12 +97,80 @@ namespace MertLesson010
             }
 
             int[,] D = new int[input.Length, FormulaD(max)];
+            for (int i = 0; i < Ip.Length; i++)
+            {
+                int[] dividers = A(Ip[i]);
+                for (int j = 0; j < dividers.Length; j++)
+                {
+                    D[i, j] = dividers[j];
+                }
+            }
 
-            // 4. Madde
+            // 4. Madde 
+            int[,] result = new int[FormulaD(max) * input.Length, 2];
+            int resultC = 0;
+            for (int i = 0; i < Ip.Length; i++)
+            {
+                for (int j = 0; j < D.GetLength(1); j++)
+                {
+                    if (D[i, j] != 0)
+                    {
+                        int sum = input[i];
 
+                        for (int x = i + 1; x < Ip.Length; x++)
+                        {
 
+                            for (int y = 0; y < D.GetLength(1); y++)
+                            {
+                                if (D[i, j] == D[x, y])
+                                {
+                                    D[x, y] = 0;
+                                    sum = sum + input[x];
+                                    break;
+                                }
+
+                            }
+
+                        }
+
+                        result[resultC, 0] = D[i, j];
+                        result[resultC, 1] = sum;
+                        resultC++;
+                    }
+                }
+            }
+
+            for (int i = 0; i < result.GetLength(0); i++)
+            {
+                int a = 0;
+                int b = 0;
+                for (int j = i + 1; j < result.GetLength(0); j++)
+                {
+                    if (result[i, 0] > result[j, 0])
+                    {
+                        a = result[i, 0];
+                        result[i, 0] = result[j, 0];
+                        result[j, 0] = a;
+
+                        b = result[i, 1];
+                        result[i, 1] = result[j, 1];
+                        result[j, 1] = b;
+                    }
+                }
+            }
             // 5. Madde
+            string resultText = "";
+            for (int i = 0; i < result.GetLength(0); i++)
+            {
+                if(result[i, 0] == 0)
+                {
+                    continue;
+                }
+                
+                resultText += "(" + result[i, 0] + " " + result[i, 1] + ")";
+            }
 
+            return resultText;
 
         }
 
